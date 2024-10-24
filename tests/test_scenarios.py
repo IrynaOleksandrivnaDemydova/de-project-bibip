@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from decimal import Decimal
 
@@ -141,8 +142,13 @@ class TestCarServiceScenarios:
         available_cars = [car for car in car_data if car.status == CarStatus.available]
 
         assert service.get_cars(CarStatus.available) == available_cars
-
+      
     def test_list_full_info_by_vin(self, tmpdir: str, car_data: list[Car], model_data: list[Model]):
+        # Убедитесь, что файл sales.txt существует
+        sales_file_path = os.path.join(tmpdir, "sales.txt")
+        if not os.path.exists(sales_file_path):
+            open(sales_file_path, "w").close()
+
         service = CarService(tmpdir)
 
         self._fill_initial_data(service, car_data, model_data)
@@ -183,6 +189,11 @@ class TestCarServiceScenarios:
         assert service.get_car_info("KNAGM4A77D5316538") == full_info_with_sale
 
     def test_update_vin(self, tmpdir: str, car_data: list[Car], model_data: list[Model]):
+        # Убедитесь, что файл sales.txt существует
+        sales_file_path = os.path.join(tmpdir, "sales.txt")
+        if not os.path.exists(sales_file_path):
+            open(sales_file_path, "w").close()
+
         service = CarService(tmpdir)
 
         full_info_no_sale = CarFullInfo(
